@@ -1,0 +1,14 @@
+version: '3'
+services:
+  redis-server: 
+    image: 'redis:6.0.6-alpine'
+  node-app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - REDIS_HOST=redis-server
+      # - REDIS_PORT=6379
+      - LOG_LEVEL=3
+      - PORT=3000
