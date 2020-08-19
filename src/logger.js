@@ -13,13 +13,13 @@ const Logger = (level = 'error') => {
     info: '\x1b[0m',
     debug: '\x1b[34m'
   }
-  
+
   return text => {
     if (!text) return false
     const logLevel = parseInt(process.env.LOG_LEVEL) || 0
     if (logLevel < Object.keys(LOG_LEVELS).indexOf(level)) return false
     const logColor = LOG_LEVELS[level] || '\x1b[31m'
-    const date = new Date
+    const date = new Date()
     console.log(`${logColor}[${level.toUpperCase()} - ${date.toISOString()}] ${text}\x1b[0m`)
   }
 }

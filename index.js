@@ -12,6 +12,7 @@ const PORT = process.env.PORT || 3000
 // Initialize API
 const keyValueStoreApp = express()
 keyValueStoreApp.use(express.json())
+
 logDebug('Connecting redis store')
 const redisStore = require('./src/redis.js')
 
@@ -22,21 +23,16 @@ const {
   updateKeyInStoreHandler
 } = require('./src/KVStoreHandlers.js')
 
-logDebug('Registering handler: getKeyFromStoreHandler to GET /:key')
+// Register handlers for / endpoint
+
 keyValueStoreApp.get('/:key', getKeyFromStoreHandler(redisStore))
-
-logDebug('Registering handler: addKeyToStoreHandler to POST /:key')
 keyValueStoreApp.post('/:key', addKeyToStoreHandler(redisStore))
-
-logDebug('Registering handler: deleteKeyFromStoreHandler to DELETE /:key')
 keyValueStoreApp.delete('/:key', deleteKeyFromStoreHandler(redisStore))
-
-logDebug('Registering handler: updateKeyInStoreHandler to PUT /:key')
 keyValueStoreApp.put('/:key', updateKeyInStoreHandler(redisStore))
-
 
 logDebug('All handlers registered, starting server...')
 keyValueStoreApp.listen(PORT, (asdf) => {
+  !redisStore.connected && logWarning('App is listening, but Redis is not connected, yet')
   logInfo(`Server started on port ${PORT}`)
 })
 

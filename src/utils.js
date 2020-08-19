@@ -2,12 +2,12 @@
 
 const strToB64 = string => {
   if (!string) return
-  return new Buffer.from(string).toString('base64')
+  return Buffer.from(string).toString('base64')
 }
 
 const b64ToString = b64String => {
   if (!b64String) return
-  return new Buffer.from(b64String, 'base64').toString('utf-8')
+  return Buffer.from(b64String, 'base64').toString('utf-8')
 }
 
 module.exports = {

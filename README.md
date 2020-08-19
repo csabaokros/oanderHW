@@ -7,7 +7,8 @@
 
 ## Running standalone
 
-You can start the server by using the `node index.js` command.
+1. Install dependencies using `npm i`
+2. You can start the server by using the `node index.js` command.
 
 Use the following environment variables to control the application:
 
@@ -20,20 +21,30 @@ Use the following environment variables to control the application:
 
 Start the app and a redis container using `docker-compose up`. The environment variables described above can be adjusted in the *docker-compose.yml* file
 
+## Using the app
+
+The purpose of the app is to operate a redis store using an http api.
+
+All operations can be carried out on the `/:key` end-point:
+* `GET /:key`: Returns the JSON stored under `key` if it exists. Returns `204` otherwise
+* `POST /:key`: Saves a new JSON string to the store under `key`. If a value already exists under the key, it returns `405` with an `Allow` header stating `PUT` as a valid option
+* `DELETE /:key`: Removes a key and its value from the store if it exists and sends  `200`. Returns `404` otherwise
+* `PUT /:key`: Updates the JSON stored under `key` if it exists, then replies with `200`. Otherwise returns `405` with an `Allow` header stating `POST` as a valid option
+
 ## Log levels
 
-Log levels can be controlled by using LOG_LEVEL environment variable. The possible values are:
+Log levels are controlled by using LOG_LEVEL environment variable. The possible values are:
 
 * `0`: Will only log errors
 * `1`: Will show errors and warnings
 * `2`: All above, plus info lines
 * `3`: All above, plus debug lines
 
-Here's how to use it on a linux system:
+Here's how to use it on a linux system when running standalone:
 ```bash
 LOG_LEVEL=3 node index.js
 ```
 
 ## Testing
 
-Run `npm run test` for unit testing
+Run `npm run test` for unit testing. Files with the extension `.test.js` in the `./test/unit` folder will be loaded and run.

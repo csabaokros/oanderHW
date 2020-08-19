@@ -1,6 +1,6 @@
 'use strict'
 
-const { logError, logWarning, logInfo, logDebug } = require('./logger.js')
+const { logError, logDebug } = require('./logger.js')
 const { strToB64, b64ToString } = require('./utils.js')
 
 /**
@@ -16,7 +16,7 @@ const getKeyFromStoreHandler = ({ getAsync }) => {
     const value = b64ToString(await getAsync(key))
     if (!value) {
       logDebug(`Key: ${key} not found, sending error`)
-      response.status(404).send(`Value for ${key} not found`)
+      response.status(204).send(`Value for ${key} not found`)
     } else {
       logDebug(`Key: ${key} found, sending value: ${value}`)
       response.send(value)
@@ -30,16 +30,25 @@ const getKeyFromStoreHandler = ({ getAsync }) => {
  * @param { store } The store to be used by the handler
  * @returns The handler function bound to the store
  */
-const addKeyToStoreHandler = ({ setAsync }) => {
+const addKeyToStoreHandler = ({ getAsync, setAsync }) => {
   return async (request, response) => {
     const { key } = request.params
-    logDebug(`Converting request body to base64...`)
+    logDebug('Converting request body to base64...')
     const jsonString = JSON.stringify(request.body)
     const jsonB64 = strToB64(jsonString)
     try {
+      const keyExists = (await getAsync(key))
+      if (keyExists) {
+        logDebug(`Data already exists under ${key}, sending 405`)
+        response.set({
+          Allow: 'PUT, DELETE'
+        })
+        response.status(405).end()
+        return
+      }
       await setAsync(key, jsonB64)
       logDebug(`Successfully added ${key} to the store`)
-      response.send('OK')
+      response.status(201).end()
     } catch (error) {
       logError(`Failed to add ${key} to the store: ${error}`)
       response.status(500).send(`Can not add ${key} to store`)
@@ -53,10 +62,23 @@ const addKeyToStoreHandler = ({ setAsync }) => {
  * @param { store } The store to be used by the handler
  * @returns The handler function bound to the store
  */
-const deleteKeyFromStoreHandler = ({ delAsync }) => {
+const deleteKeyFromStoreHandler = ({ getAsync, delAsync }) => {
   return async (request, response) => {
-    await delAsync('oander')
-    response.send('ok')
+    const { key } = request.params
+    try {
+      const keyExists = (await getAsync(key))
+      if (!keyExists) {
+        logDebug(`Data does not exists under ${key}, sending 404`)
+        response.status(404).send(`No entry under ${key}`)
+        return
+      }
+      await delAsync(key)
+      logDebug(`Successfully deleted ${key} from the store`)
+      response.status(200).end()
+    } catch (error) {
+      logError(`Failed to delete ${key} from the store: ${error}`)
+      response.status(500).send(`Can not remove ${key} from store`)
+    }
   }
 }
 
@@ -66,9 +88,29 @@ const deleteKeyFromStoreHandler = ({ delAsync }) => {
  * @param { store } The store to be used by the handler
  * @returns The handler function bound to the store
  */
-const updateKeyInStoreHandler = ({setAsync}) => {
+const updateKeyInStoreHandler = ({ getAsync, setAsync }) => {
   return async (request, response) => {
-    response.send(await getAsync('oander'))
+    const { key } = request.params
+    logDebug('Converting request body to base64...')
+    const jsonString = JSON.stringify(request.body)
+    const jsonB64 = strToB64(jsonString)
+    try {
+      const keyExists = (await getAsync(key))
+      if (!keyExists) {
+        logDebug(`Data does not exists under ${key}, sending 405`)
+        response.set({
+          Allow: 'POST'
+        })
+        response.status(405).end()
+        return
+      }
+      await setAsync(key, jsonB64)
+      logDebug(`Successfully modified ${key}`)
+      response.status(200).send('OK')
+    } catch (error) {
+      logError(`Failed to modify ${key}: ${error}`)
+      response.status(500).send(`Can not modify ${key}`)
+    }
   }
 }
 
