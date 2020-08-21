@@ -48,3 +48,9 @@ LOG_LEVEL=3 node index.js
 ## Testing
 
 Run `npm run test` for unit testing. Files with the extension `.test.js` in the `./test/unit` folder will be loaded and run.
+
+## Timetable:
+
+Day 1: 5 hours
+Day 2: 3 hours
+Day 3: 1 hour

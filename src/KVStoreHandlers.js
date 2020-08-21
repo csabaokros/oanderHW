@@ -106,7 +106,7 @@ const updateKeyInStoreHandler = ({ getAsync, setAsync }) => {
       }
       await setAsync(key, jsonB64)
       logDebug(`Successfully modified ${key}`)
-      response.status(200).send('OK')
+      response.status(200).end()
     } catch (error) {
       logError(`Failed to modify ${key}: ${error}`)
       response.status(500).send(`Can not modify ${key}`)

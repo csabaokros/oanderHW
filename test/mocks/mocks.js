@@ -21,7 +21,7 @@ const MockStore = function () {
 }
 
 /**
- * An object used as a makeshift request to be passed to the express handlers
+ * Returns an object used as a makeshift request to be passed to the express handlers
  */
 const MockRequest = function () {
   return {
@@ -33,7 +33,7 @@ const MockRequest = function () {
 }
 
 /**
- * An object used as a makeshift response for the express handlers to modify
+ * Returns an object used as a makeshift response for the express handlers to modify
  */
 const MockResponse = function () {
   return {
