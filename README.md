@@ -51,6 +51,9 @@ Run `npm run test` for unit testing. Files with the extension `.test.js` in the 
 
 ## Timetable:
 
-Day 1: 5 hours
-Day 2: 3 hours
-Day 3: 1 hour
+|Day|Time spent|
+|-|-|
+Day 1 | 5 hours
+Day 2 | 3 hours
+Day 3 | 1 hour
+Day 4 | 1 hour
