@@ -43,12 +43,12 @@ const addKeyToStoreHandler = ({ getAsync, setAsync }) => {
         response.set({
           Allow: 'PUT, DELETE'
         })
-        response.status(405).end()
+        response.status(405).send('Key already exists')
         return
       }
       await setAsync(key, jsonB64)
       logDebug(`Successfully added ${key} to the store`)
-      response.status(201).end()
+      response.status(201).send('Key successfully created')
     } catch (error) {
       logError(`Failed to add ${key} to the store: ${error}`)
       response.status(500).send(`Can not add ${key} to store`)
@@ -74,7 +74,7 @@ const deleteKeyFromStoreHandler = ({ getAsync, delAsync }) => {
       }
       await delAsync(key)
       logDebug(`Successfully deleted ${key} from the store`)
-      response.status(200).end()
+      response.status(200).send('Key successfully deleted')
     } catch (error) {
       logError(`Failed to delete ${key} from the store: ${error}`)
       response.status(500).send(`Can not remove ${key} from store`)
@@ -101,12 +101,12 @@ const updateKeyInStoreHandler = ({ getAsync, setAsync }) => {
         response.set({
           Allow: 'POST'
         })
-        response.status(405).end()
+        response.status(405).send('Key does not exists')
         return
       }
       await setAsync(key, jsonB64)
       logDebug(`Successfully modified ${key}`)
-      response.status(200).end()
+      response.status(200).send('Succesfully modified key')
     } catch (error) {
       logError(`Failed to modify ${key}: ${error}`)
       response.status(500).send(`Can not modify ${key}`)
